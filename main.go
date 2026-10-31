@@ -17,6 +17,7 @@ func main() {
 	}
 
 	mux.HandleFunc("POST /jobs", handler.Create)
+	mux.HandleFunc("GET /jobs/{id}", handler.Get)
 
 	log.Println("Server listening on: 8080")
 

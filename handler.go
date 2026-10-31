@@ -72,3 +72,32 @@ func (jh *JobHandler) Create(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to write job response: %v", err)
 	}
 }
+
+func (jh *JobHandler) Get(w http.ResponseWriter, r *http.Request) {
+	// 1. 从 URL 路径中提取 Job ID
+	id := r.PathValue("id")
+
+	// 2. 获取 job
+	job, exist := jh.store.Get(id)
+
+	// 3. 如果 Job 不存在，返回 404
+	if !exist {
+		http.Error(w, "no job matched", http.StatusNotFound)
+		return
+	}
+
+	// 4. 如果 Job 存在，返回 200 和 JSON 数据
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	response := map[string]any{
+		"id":       job.ID,
+		"status":   job.Status,
+		"goal":     job.Goal,
+		"progress": job.Progress,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to get job status: %v", err)
+	}
+}
