@@ -59,6 +59,8 @@ func (jh *JobHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	jh.store.Create(job)
 
+	go jh.runJob(id)
+
 	// 返回 JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
